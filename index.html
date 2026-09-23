@@ -1,43 +1,3740 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SalesTrack</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>SalesTrack</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f8fafc;
+            color: #0f172a;
+            font-family: Inter, system-ui, sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        .hidden-app {
+            display: none !important;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(15,23,42,.04);
+        }
+
+        .input {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 13px;
+            outline: none;
+            background: #fff;
+            transition: .2s;
+        }
+
+        .input:focus {
+            border-color: #475569;
+            box-shadow: 0 0 0 3px rgba(71,85,105,.10);
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 12px;
+            padding: 11px 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        .btn:active {
+            transform: scale(.98);
+        }
+
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e293b;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .nav-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 13px;
+            border-radius: 12px;
+            color: #64748b;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .nav-btn.active {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .mobile-nav-btn {
+            padding: 7px;
+            border-radius: 10px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .mobile-nav-btn.active {
+            background: #0f172a;
+            color: white;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-gray {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .modal {
+            background: rgba(15,23,42,.60);
+            backdrop-filter: blur(3px);
+        }
+
+        .toast {
+            position: fixed;
+            right: 16px;
+            bottom: 20px;
+            z-index: 9999;
+            max-width: calc(100vw - 32px);
+            transform: translateY(120px);
+            opacity: 0;
+            transition: .3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .glass {
+            background: rgba(255,255,255,.88);
+            backdrop-filter: blur(12px);
+        }
+
+        @media (max-width: 767px) {
+            .desktop-sidebar {
+                display: none;
+            }
+
+            .main-content {
+                padding-bottom: 85px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <h1>SalesTrack</h1>
-  <p id="status">Menghubungkan ke Firebase...</p>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section id="loginScreen" class="min-h-screen bg-slate-950 flex items-center justify-center p-5">
+
+    <div class="w-full max-w-md">
+
+        <div class="text-center mb-7">
+
+            <div class="w-16 h-16 bg-white text-slate-950 rounded-2xl mx-auto flex items-center justify-center text-2xl font-black">
+                ST
+            </div>
+
+            <h1 class="text-3xl font-black text-white mt-5">
+                SalesTrack
+            </h1>
+
+            <p class="text-slate-400 text-sm mt-2">
+                Sales & Inventory Management
+            </p>
+
+        </div>
+
+
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl">
+
+            <h2 class="text-xl font-black">
+                Masuk
+            </h2>
+
+            <p class="text-sm text-slate-500 mt-1 mb-6">
+                Gunakan email dan password akun Anda.
+            </p>
+
+
+            <form id="loginForm" class="space-y-4">
+
+                <div>
+
+                    <label class="block text-sm font-bold mb-2">
+                        Email
+                    </label>
+
+                    <input
+                        id="loginEmail"
+                        type="email"
+                        class="input"
+                        placeholder="nama@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-sm font-bold mb-2">
+                        Password
+                    </label>
+
+                    <input
+                        id="loginPassword"
+                        type="password"
+                        class="input"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <div
+                    id="loginError"
+                    class="hidden bg-red-50 border border-red-100 text-red-700 text-sm p-3 rounded-xl"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="btn btn-primary w-full py-3"
+                >
+                    Masuk
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     APPLICATION
+===================================================== -->
+
+<section id="appScreen" class="hidden-app min-h-screen">
+
+
+    <!-- SIDEBAR DESKTOP -->
+
+    <aside class="desktop-sidebar fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-slate-200 z-40 flex flex-col">
+
+        <div class="p-5 border-b border-slate-100">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-11 h-11 bg-slate-950 text-white rounded-xl flex items-center justify-center font-black">
+                    ST
+                </div>
+
+                <div>
+
+                    <div class="font-black">
+                        SalesTrack
+                    </div>
+
+                    <div class="text-xs text-slate-400">
+                        Sales Management
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <nav class="p-4 space-y-1 flex-1">
+
+            <button class="nav-btn active" data-page="dashboard">
+                <span>▦</span>
+                Dashboard
+            </button>
+
+            <button class="nav-btn" data-page="transaction">
+                <span>＋</span>
+                Transaksi
+            </button>
+
+            <button class="nav-btn" data-page="inventory">
+                <span>▣</span>
+                Inventaris
+            </button>
+
+            <button class="nav-btn" data-page="history">
+                <span>☷</span>
+                Riwayat
+            </button>
+
+        </nav>
+
+
+        <div class="p-4 border-t border-slate-100">
+
+            <div class="bg-slate-50 rounded-xl p-3 mb-3">
+
+                <div class="text-xs text-slate-400">
+                    Login
+                </div>
+
+                <div
+                    id="currentUserEmail"
+                    class="text-sm font-bold mt-1 truncate"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="btn btn-secondary w-full"
+            >
+                Keluar
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="md:ml-64 min-h-screen main-content">
+
+
+        <!-- HEADER -->
+
+        <header class="sticky top-0 z-30 glass border-b border-slate-200">
+
+            <div class="px-4 sm:px-6 py-4 flex justify-between items-center">
+
+                <div>
+
+                    <div
+                        id="currentDate"
+                        class="text-xs text-slate-400 font-semibold"
+                    ></div>
+
+                    <h1
+                        id="pageTitle"
+                        class="text-xl sm:text-2xl font-black mt-1"
+                    >
+                        Dashboard
+                    </h1>
+
+                </div>
+
+
+                <div class="flex items-center gap-2">
+
+                    <div class="hidden sm:flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-xl text-xs font-bold">
+
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+
+                        Online
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+
+
+            <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
+
+            <section id="page-dashboard" class="page">
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+
+
+                    <div class="card p-4 sm:p-5">
+
+                        <div class="text-xs sm:text-sm font-bold text-slate-500">
+                            Pendapatan
+                        </div>
+
+                        <div
+                            id="dashRevenue"
+                            class="text-lg sm:text-2xl font-black mt-3"
+                        >
+                            Rp0
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Total penjualan
+                        </div>
+
+                    </div>
+
+
+                    <div class="card p-4 sm:p-5">
+
+                        <div class="text-xs sm:text-sm font-bold text-slate-500">
+                            HPP / Modal
+                        </div>
+
+                        <div
+                            id="dashCost"
+                            class="text-lg sm:text-2xl font-black text-red-600 mt-3"
+                        >
+                            Rp0
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Modal barang terjual
+                        </div>
+
+                    </div>
+
+
+                    <div class="card p-4 sm:p-5">
+
+                        <div class="text-xs sm:text-sm font-bold text-slate-500">
+                            Laba Kotor
+                        </div>
+
+                        <div
+                            id="dashProfit"
+                            class="text-lg sm:text-2xl font-black text-green-600 mt-3"
+                        >
+                            Rp0
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Pendapatan - HPP
+                        </div>
+
+                    </div>
+
+
+                    <div class="card p-4 sm:p-5">
+
+                        <div class="text-xs sm:text-sm font-bold text-slate-500">
+                            Total Stok
+                        </div>
+
+                        <div
+                            id="dashStock"
+                            class="text-lg sm:text-2xl font-black mt-3"
+                        >
+                            0
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Semua produk
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- QUICK ACTION -->
+
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+
+                    <div class="card p-5">
+
+                        <h2 class="font-black">
+                            Transaksi baru
+                        </h2>
+
+                        <p class="text-xs text-slate-400 mt-1 mb-4">
+                            Catat penjualan sekarang.
+                        </p>
+
+                        <button
+                            class="btn btn-primary w-full"
+                            data-page-target="transaction"
+                        >
+                            + Buat Transaksi
+                        </button>
+
+                    </div>
+
+
+                    <div class="card p-5">
+
+                        <h2 class="font-black">
+                            Inventaris
+                        </h2>
+
+                        <p class="text-xs text-slate-400 mt-1 mb-4">
+                            Kelola stok dan harga.
+                        </p>
+
+                        <button
+                            class="btn btn-secondary w-full"
+                            data-page-target="inventory"
+                        >
+                            Kelola Produk
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECENT -->
+
+                <div class="card overflow-hidden">
+
+                    <div class="p-5 border-b border-slate-100">
+
+                        <h2 class="font-black">
+                            Transaksi terbaru
+                        </h2>
+
+                        <p class="text-xs text-slate-400 mt-1">
+                            Data real-time dari Firebase
+                        </p>
+
+                    </div>
+
+
+                    <div id="recentTransactions"></div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 TRANSACTION
+            ================================================== -->
+
+            <section id="page-transaction" class="page hidden">
+
+                <div class="max-w-3xl mx-auto">
+
+                    <div class="card p-5 sm:p-7">
+
+                        <div class="mb-6">
+
+                            <h2 class="text-xl font-black">
+                                Transaksi Penjualan
+                            </h2>
+
+                            <p class="text-sm text-slate-500 mt-1">
+                                Stok akan berkurang otomatis.
+                            </p>
+
+                        </div>
+
+
+                        <form id="transactionForm" class="space-y-5">
+
+
+                            <div>
+
+                                <label class="block text-sm font-bold mb-2">
+                                    Produk
+                                </label>
+
+                                <select
+                                    id="transactionProduct"
+                                    class="input"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Pilih produk...
+                                    </option>
+
+                                </select>
+
+                                <div
+                                    id="stockInfo"
+                                    class="text-xs text-slate-400 mt-2"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-bold mb-2">
+                                    Qty
+                                </label>
+
+                                <input
+                                    id="transactionQty"
+                                    type="number"
+                                    min="1"
+                                    value="1"
+                                    class="input"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="bg-slate-50 rounded-2xl p-4">
+
+                                <div class="flex justify-between text-sm">
+
+                                    <span class="text-slate-500">
+                                        Harga produk
+                                    </span>
+
+                                    <strong id="productPrice">
+                                        Rp0
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="flex justify-between text-sm mt-2">
+
+                                    <span class="text-slate-500">
+                                        Subtotal
+                                    </span>
+
+                                    <strong id="productSubtotal">
+                                        Rp0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+
+                                <div>
+
+                                    <label class="block text-sm font-bold mb-2">
+                                        Ongkir
+                                    </label>
+
+                                    <input
+                                        id="shipping"
+                                        type="number"
+                                        min="0"
+                                        value="0"
+                                        class="input"
+                                    >
+
+                                </div>
+
+
+                                <div>
+
+                                    <label class="block text-sm font-bold mb-2">
+                                        Stiker
+                                    </label>
+
+                                    <input
+                                        id="sticker"
+                                        type="number"
+                                        min="0"
+                                        value="0"
+                                        class="input"
+                                    >
+
+                                </div>
+
+
+                                <div>
+
+                                    <label class="block text-sm font-bold mb-2">
+                                        Paperbag
+                                    </label>
+
+                                    <input
+                                        id="paperbag"
+                                        type="number"
+                                        min="0"
+                                        value="0"
+                                        class="input"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-bold mb-2">
+                                    Pelanggan / Catatan
+                                </label>
+
+                                <input
+                                    id="transactionNote"
+                                    type="text"
+                                    class="input"
+                                    placeholder="Contoh: Budi / COD / Jakarta"
+                                >
+
+                            </div>
+
+
+                            <div class="bg-slate-950 text-white rounded-2xl p-5">
+
+                                <div class="text-xs text-slate-400">
+                                    TOTAL TRANSAKSI
+                                </div>
+
+                                <div
+                                    id="transactionTotal"
+                                    class="text-3xl font-black mt-1"
+                                >
+                                    Rp0
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                id="transactionError"
+                                class="hidden bg-red-50 text-red-700 border border-red-100 p-3 rounded-xl text-sm"
+                            ></div>
+
+
+                            <button
+                                id="saveTransactionBtn"
+                                type="submit"
+                                class="btn btn-primary w-full py-3"
+                            >
+                                Simpan Transaksi
+                            </button>
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 INVENTORY
+            ================================================== -->
+
+            <section id="page-inventory" class="page hidden">
+
+                <div class="flex flex-col sm:flex-row justify-between gap-3 mb-5">
+
+                    <div>
+
+                        <h2 class="text-xl font-black">
+                            Inventaris
+                        </h2>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Data produk tersimpan di Firebase.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="addProductBtn"
+                        class="btn btn-primary"
+                    >
+                        + Tambah Produk
+                    </button>
+
+                </div>
+
+
+                <div class="card overflow-hidden">
+
+                    <div class="overflow-x-auto">
+
+                        <table class="w-full text-sm">
+
+                            <thead class="bg-slate-50 border-b border-slate-100">
+
+                                <tr>
+
+                                    <th class="text-left px-4 py-4">
+                                        Produk
+                                    </th>
+
+                                    <th class="text-right px-4 py-4">
+                                        Stok
+                                    </th>
+
+                                    <th class="text-right px-4 py-4">
+                                        HPP
+                                    </th>
+
+                                    <th class="text-right px-4 py-4">
+                                        Harga
+                                    </th>
+
+                                    <th class="text-right px-4 py-4">
+                                        Aksi
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="inventoryTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 HISTORY
+            ================================================== -->
+
+            <section id="page-history" class="page hidden">
+
+                <div class="mb-5">
+
+                    <h2 class="text-xl font-black">
+                        Riwayat Transaksi
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        Semua transaksi yang tercatat.
+                    </p>
+
+                </div>
+
+
+                <div class="card overflow-hidden">
+
+                    <div class="p-4 border-b border-slate-100">
+
+                        <input
+                            id="historySearch"
+                            type="search"
+                            class="input"
+                            placeholder="Cari produk, email, catatan, ID..."
+                        >
+
+                    </div>
+
+
+                    <div id="historyList"></div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- MOBILE NAV -->
+
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 px-2 py-2">
+
+        <div class="grid grid-cols-4 gap-1">
+
+            <button
+                class="mobile-nav-btn active"
+                data-page="dashboard"
+            >
+                <div class="text-lg">▦</div>
+                Home
+            </button>
+
+            <button
+                class="mobile-nav-btn"
+                data-page="transaction"
+            >
+                <div class="text-lg">＋</div>
+                Jual
+            </button>
+
+            <button
+                class="mobile-nav-btn"
+                data-page="inventory"
+            >
+                <div class="text-lg">▣</div>
+                Stok
+            </button>
+
+            <button
+                class="mobile-nav-btn"
+                data-page="history"
+            >
+                <div class="text-lg">☷</div>
+                Riwayat
+            </button>
+
+        </div>
+
+    </nav>
+
+</section>
+
+
+
+<!-- =====================================================
+     PRODUCT MODAL
+===================================================== -->
+
+<div
+    id="productModal"
+    class="hidden fixed inset-0 z-[100] modal items-center justify-center p-4"
+>
+
+    <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl">
+
+        <div class="p-5 border-b border-slate-100 flex justify-between">
+
+            <div>
+
+                <h3
+                    id="productModalTitle"
+                    class="font-black text-lg"
+                >
+                    Tambah Produk
+                </h3>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    Isi informasi produk.
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeProductModal"
+                class="w-9 h-9 rounded-full bg-slate-100 font-bold"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form
+            id="productForm"
+            class="p-5 space-y-4"
+        >
+
+            <input
+                id="editProductId"
+                type="hidden"
+            >
+
+
+            <div>
+
+                <label class="block text-sm font-bold mb-2">
+                    Nama Produk
+                </label>
+
+                <input
+                    id="productName"
+                    class="input"
+                    placeholder="Nama produk"
+                    required
+                >
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <div>
+
+                    <label class="block text-sm font-bold mb-2">
+                        Stok
+                    </label>
+
+                    <input
+                        id="productStock"
+                        type="number"
+                        min="0"
+                        value="0"
+                        class="input"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-sm font-bold mb-2">
+                        HPP
+                    </label>
+
+                    <input
+                        id="productCost"
+                        type="number"
+                        min="0"
+                        value="0"
+                        class="input"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-sm font-bold mb-2">
+                    Harga Jual
+                </label>
+
+                <input
+                    id="productPrice"
+                    type="number"
+                    min="0"
+                    value="0"
+                    class="input"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary w-full"
+            >
+                Simpan Produk
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     STOCK MODAL
+===================================================== -->
+
+<div
+    id="stockModal"
+    class="hidden fixed inset-0 z-[100] modal items-center justify-center p-4"
+>
+
+    <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl">
+
+        <div class="p-5 border-b border-slate-100 flex justify-between">
+
+            <div>
+
+                <h3 class="font-black text-lg">
+                    Kelola Stok
+                </h3>
+
+                <p
+                    id="stockProductName"
+                    class="text-xs text-slate-400 mt-1"
+                >
+                    -
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeStockModal"
+                class="w-9 h-9 rounded-full bg-slate-100 font-bold"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="p-5 space-y-4">
+
+            <div>
+
+                <label class="block text-sm font-bold mb-2">
+                    Jumlah
+                </label>
+
+                <input
+                    id="stockAmount"
+                    type="number"
+                    min="1"
+                    value="1"
+                    class="input"
+                >
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <button
+                    id="addStockBtn"
+                    class="btn btn-success"
+                >
+                    + Tambah
+                </button>
+
+                <button
+                    id="subtractStockBtn"
+                    class="btn btn-danger"
+                >
+                    − Kurangi
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- TOAST -->
+
+<div id="toast" class="toast">
+
+    <div class="bg-slate-950 text-white px-4 py-3 rounded-xl shadow-xl flex gap-3">
+
+        <span id="toastIcon">
+            ✓
+        </span>
+
+        <span
+            id="toastMessage"
+            class="text-sm font-semibold"
+        >
+            Berhasil
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FIREBASE + APPLICATION LOGIC
+===================================================== -->
+
+<script type="module">
+
+    /* =====================================================
+       FIREBASE IMPORT
+    ===================================================== */
+
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+    import {
+        getDatabase,
+        ref,
+        push,
+        set,
+        update,
+        remove,
+        onValue,
+        runTransaction,
+        get
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+
+    /* =====================================================
+       FIREBASE CONFIG
+    ===================================================== */
 
     const firebaseConfig = {
-  apiKey: "AIzaSyB8Xsejs9mr5fGcsREESFLBbFx3CmW1Hrg",
-  authDomain: "salestrack-e1cc2.firebaseapp.com",
-  databaseURL: "https://salestrack-e1cc2-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "salestrack-e1cc2",
-  storageBucket: "salestrack-e1cc2.firebasestorage.app",
-  messagingSenderId: "89422523397",
-  appId: "1:89422523397:web:2055c259b5cbac7e57006c"
+
+        apiKey: "AIzaSyB8Xsejs9mr5fGcsREESFLBbFx3CmW1Hrg",
+
+        authDomain:
+            "salestrack-e1cc2.firebaseapp.com",
+
+        databaseURL:
+            "https://salestrack-e1cc2-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+        projectId:
+            "salestrack-e1cc2",
+
+        storageBucket:
+            "salestrack-e1cc2.firebasestorage.app",
+
+        messagingSenderId:
+            "89422523397",
+
+        appId:
+            "1:89422523397:web:2055c259b5cbac7e57006c"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const database = getDatabase(app);
 
-    onAuthStateChanged(auth, (user) => {
-      const status = document.getElementById("status");
 
-      if (user) {
-        status.textContent = "Firebase terhubung. Login sebagai: " + user.email;
-      } else {
-        status.textContent = "Firebase terhubung, tetapi belum login.";
-      }
-    });
-  </script>
+    /* =====================================================
+       INITIALIZE FIREBASE
+    ===================================================== */
+
+    const app =
+        initializeApp(firebaseConfig);
+
+
+    const auth =
+        getAuth(app);
+
+
+    const database =
+        getDatabase(app);
+
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let currentUser = null;
+
+    let products = {};
+
+    let transactions = {};
+
+    let currentPage = "dashboard";
+
+    let unsubscribeProducts = null;
+
+    let unsubscribeTransactions = null;
+
+    let editingProductId = null;
+
+    let selectedStockProductId = null;
+
+
+
+    /* =====================================================
+       DOM HELPERS
+    ===================================================== */
+
+    const $ = id =>
+        document.getElementById(id);
+
+
+
+    /* =====================================================
+       UTILITIES
+    ===================================================== */
+
+    function rupiah(value) {
+
+        return new Intl.NumberFormat(
+            "id-ID",
+            {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0
+            }
+        ).format(
+            Number(value) || 0
+        );
+    }
+
+
+    function number(value) {
+
+        return new Intl.NumberFormat(
+            "id-ID"
+        ).format(
+            Number(value) || 0
+        );
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    function formatDate(value) {
+
+        const date =
+            new Date(value);
+
+
+        return new Intl.DateTimeFormat(
+            "id-ID",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ).format(date);
+    }
+
+
+    function showToast(
+        message,
+        icon = "✓"
+    ) {
+
+        $("toastMessage").textContent =
+            message;
+
+        $("toastIcon").textContent =
+            icon;
+
+        $("toast").classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            window.__toastTimer
+        );
+
+
+        window.__toastTimer =
+            setTimeout(
+                () => {
+                    $("toast")
+                        .classList.remove(
+                            "show"
+                        );
+                },
+                2800
+            );
+    }
+
+
+
+    /* =====================================================
+       AUTH
+    ===================================================== */
+
+    $("loginForm")
+        .addEventListener(
+            "submit",
+            async event => {
+
+                event.preventDefault();
+
+
+                const email =
+                    $("loginEmail")
+                        .value
+                        .trim();
+
+
+                const password =
+                    $("loginPassword")
+                        .value;
+
+
+                $("loginError")
+                    .classList.add(
+                        "hidden"
+                    );
+
+
+                $("loginButton")
+                    .disabled = true;
+
+
+                $("loginButton")
+                    .textContent =
+                    "Memproses...";
+
+
+                try {
+
+                    await signInWithEmailAndPassword(
+                        auth,
+                        email,
+                        password
+                    );
+
+                } catch (error) {
+
+                    console.error(error);
+
+
+                    let message =
+                        "Email atau password salah.";
+
+
+                    if (
+                        error.code ===
+                        "auth/invalid-credential"
+                    ) {
+
+                        message =
+                            "Email atau password salah.";
+
+                    } else if (
+                        error.code ===
+                        "auth/too-many-requests"
+                    ) {
+
+                        message =
+                            "Terlalu banyak percobaan. Coba lagi nanti.";
+
+                    } else if (
+                        error.code ===
+                        "auth/invalid-email"
+                    ) {
+
+                        message =
+                            "Format email tidak valid.";
+                    }
+
+
+                    $("loginError").textContent =
+                        message;
+
+
+                    $("loginError")
+                        .classList.remove(
+                            "hidden"
+                        );
+
+                } finally {
+
+                    $("loginButton")
+                        .disabled = false;
+
+                    $("loginButton")
+                        .textContent =
+                        "Masuk";
+                }
+
+            }
+        );
+
+
+
+    $("logoutBtn")
+        .addEventListener(
+            "click",
+            async () => {
+
+                await signOut(auth);
+
+            }
+        );
+
+
+
+    /* =====================================================
+       AUTH STATE
+    ===================================================== */
+
+    onAuthStateChanged(
+        auth,
+        user => {
+
+            currentUser = user;
+
+
+            if (user) {
+
+                $("loginScreen")
+                    .classList.add(
+                        "hidden-app"
+                    );
+
+
+                $("appScreen")
+                    .classList.remove(
+                        "hidden-app"
+                    );
+
+
+                $("currentUserEmail")
+                    .textContent =
+                    user.email;
+
+
+                startRealtimeListeners();
+
+
+                renderDate();
+
+
+            } else {
+
+                $("appScreen")
+                    .classList.add(
+                        "hidden-app"
+                    );
+
+
+                $("loginScreen")
+                    .classList.remove(
+                        "hidden-app"
+                    );
+
+
+                if (
+                    unsubscribeProducts
+                ) {
+
+                    unsubscribeProducts();
+
+                    unsubscribeProducts =
+                        null;
+                }
+
+
+                if (
+                    unsubscribeTransactions
+                ) {
+
+                    unsubscribeTransactions();
+
+                    unsubscribeTransactions =
+                        null;
+                }
+
+            }
+
+        }
+    );
+
+
+
+    /* =====================================================
+       REALTIME LISTENERS
+    ===================================================== */
+
+    function startRealtimeListeners() {
+
+        if (
+            unsubscribeProducts
+        ) {
+
+            unsubscribeProducts();
+
+        }
+
+
+        if (
+            unsubscribeTransactions
+        ) {
+
+            unsubscribeTransactions();
+
+        }
+
+
+        const productsRef =
+            ref(
+                database,
+                "products"
+            );
+
+
+        const transactionsRef =
+            ref(
+                database,
+                "transactions"
+            );
+
+
+        unsubscribeProducts =
+            onValue(
+                productsRef,
+                snapshot => {
+
+                    products =
+                        snapshot.val() || {};
+
+                    renderAll();
+
+                },
+                error => {
+
+                    console.error(
+                        "Products listener:",
+                        error
+                    );
+
+                    showToast(
+                        "Gagal membaca data produk.",
+                        "!"
+                    );
+
+                }
+            );
+
+
+        unsubscribeTransactions =
+            onValue(
+                transactionsRef,
+                snapshot => {
+
+                    transactions =
+                        snapshot.val() || {};
+
+                    renderAll();
+
+                },
+                error => {
+
+                    console.error(
+                        "Transactions listener:",
+                        error
+                    );
+
+                    showToast(
+                        "Gagal membaca transaksi.",
+                        "!"
+                    );
+
+                }
+            );
+    }
+
+
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+    function navigateTo(page) {
+
+        currentPage =
+            page;
+
+
+        document
+            .querySelectorAll(".page")
+            .forEach(
+                element => {
+
+                    element.classList.add(
+                        "hidden"
+                    );
+
+                }
+            );
+
+
+        const pageElement =
+            $("page-" + page);
+
+
+        if (pageElement) {
+
+            pageElement
+                .classList.remove(
+                    "hidden"
+                );
+        }
+
+
+        document
+            .querySelectorAll(
+                "[data-page]"
+            )
+            .forEach(
+                button => {
+
+                    button.classList.toggle(
+                        "active",
+                        button.dataset.page === page
+                    );
+
+                }
+            );
+
+
+        const titles = {
+
+            dashboard:
+                "Dashboard",
+
+            transaction:
+                "Transaksi Penjualan",
+
+            inventory:
+                "Inventaris",
+
+            history:
+                "Riwayat Transaksi"
+        };
+
+
+        $("pageTitle").textContent =
+            titles[page] ||
+            "Dashboard";
+
+
+        window.scrollTo(
+            {
+                top: 0,
+                behavior: "smooth"
+            }
+        );
+    }
+
+
+
+    document
+        .querySelectorAll(
+            "[data-page]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        navigateTo(
+                            button.dataset.page
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-page-target]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        navigateTo(
+                            button.dataset.pageTarget
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+
+    /* =====================================================
+       DASHBOARD
+    ===================================================== */
+
+    function getStats() {
+
+        let revenue = 0;
+
+        let cost = 0;
+
+        let totalUnits = 0;
+
+        let stock = 0;
+
+
+        Object.values(
+            transactions
+        ).forEach(
+            transaction => {
+
+                revenue +=
+                    Number(
+                        transaction.total
+                    ) || 0;
+
+
+                cost +=
+                    Number(
+                        transaction.costTotal
+                    ) || 0;
+
+
+                totalUnits +=
+                    Number(
+                        transaction.qty
+                    ) || 0;
+
+            }
+        );
+
+
+        Object.values(
+            products
+        ).forEach(
+            product => {
+
+                stock +=
+                    Number(
+                        product.stock
+                    ) || 0;
+
+            }
+        );
+
+
+        return {
+
+            revenue,
+
+            cost,
+
+            profit:
+                revenue - cost,
+
+            totalUnits,
+
+            stock
+        };
+    }
+
+
+
+    function renderDashboard() {
+
+        const stats =
+            getStats();
+
+
+        $("dashRevenue")
+            .textContent =
+            rupiah(
+                stats.revenue
+            );
+
+
+        $("dashCost")
+            .textContent =
+            rupiah(
+                stats.cost
+            );
+
+
+        $("dashProfit")
+            .textContent =
+            rupiah(
+                stats.profit
+            );
+
+
+        $("dashStock")
+            .textContent =
+            number(
+                stats.stock
+            );
+
+
+        const list =
+            Object.entries(
+                transactions
+            )
+                .map(
+                    ([id, data]) => ({
+                        id,
+                        ...data
+                    })
+                )
+                .sort(
+                    (a, b) =>
+                        new Date(
+                            b.createdAt
+                        ) -
+                        new Date(
+                            a.createdAt
+                        )
+                )
+                .slice(
+                    0,
+                    5
+                );
+
+
+        if (!list.length) {
+
+            $("recentTransactions")
+                .innerHTML = `
+                    <div class="p-10 text-center">
+                        <div class="text-3xl mb-3">☷</div>
+
+                        <div class="font-bold">
+                            Belum ada transaksi
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Transaksi yang masuk akan muncul di sini.
+                        </div>
+                    </div>
+                `;
+
+            return;
+        }
+
+
+        $("recentTransactions")
+            .innerHTML =
+            list.map(
+                transaction => `
+
+                    <div class="p-4 flex justify-between gap-4 border-b border-slate-100 last:border-0">
+
+                        <div class="min-w-0">
+
+                            <div class="font-bold truncate">
+                                ${escapeHtml(
+                                    transaction.productName
+                                )}
+                            </div>
+
+                            <div class="text-xs text-slate-400 mt-1">
+                                ${number(
+                                    transaction.qty
+                                )} unit
+                                ·
+                                ${formatDate(
+                                    transaction.createdAt
+                                )}
+                            </div>
+
+                            <div class="text-xs text-slate-400">
+                                ${escapeHtml(
+                                    transaction.createdByEmail ||
+                                    "-"
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-right shrink-0">
+
+                            <div class="font-black">
+                                ${rupiah(
+                                    transaction.total
+                                )}
+                            </div>
+
+                            <div class="text-xs text-green-600 font-bold mt-1">
+                                Tersimpan
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `
+            )
+            .join("");
+    }
+
+
+
+    /* =====================================================
+       PRODUCT SELECT
+    ===================================================== */
+
+    function renderProductSelect() {
+
+        const select =
+            $("transactionProduct");
+
+
+        const oldValue =
+            select.value;
+
+
+        select.innerHTML =
+            `
+                <option value="">
+                    Pilih produk...
+                </option>
+            `;
+
+
+        Object.entries(
+            products
+        )
+            .sort(
+                ([, a], [, b]) =>
+                    String(a.name)
+                        .localeCompare(
+                            String(b.name),
+                            "id"
+                        )
+            )
+            .forEach(
+                ([id, product]) => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        id;
+
+
+                    option.textContent =
+                        `${product.name} — Stok ${product.stock} — ${rupiah(product.price)}`;
+
+
+                    select.appendChild(
+                        option
+                    );
+                }
+            );
+
+
+        if (
+            products[oldValue]
+        ) {
+
+            select.value =
+                oldValue;
+
+        }
+    }
+
+
+
+    /* =====================================================
+       TRANSACTION CALCULATOR
+    ===================================================== */
+
+    function calculateTransaction() {
+
+        const productId =
+            $("transactionProduct")
+                .value;
+
+
+        const product =
+            products[productId];
+
+
+        const qty =
+            Math.max(
+                1,
+                Number(
+                    $("transactionQty")
+                        .value
+                ) || 1
+            );
+
+
+        const shipping =
+            Math.max(
+                0,
+                Number(
+                    $("shipping").value
+                ) || 0
+            );
+
+
+        const sticker =
+            Math.max(
+                0,
+                Number(
+                    $("sticker").value
+                ) || 0
+            );
+
+
+        const paperbag =
+            Math.max(
+                0,
+                Number(
+                    $("paperbag").value
+                ) || 0
+            );
+
+
+        if (!product) {
+
+            $("stockInfo")
+                .textContent =
+                "Pilih produk terlebih dahulu.";
+
+
+            $("productPrice")
+                .textContent =
+                rupiah(0);
+
+
+            $("productSubtotal")
+                .textContent =
+                rupiah(0);
+
+
+            $("transactionTotal")
+                .textContent =
+                rupiah(
+                    shipping +
+                    sticker +
+                    paperbag
+                );
+
+
+            return;
+        }
+
+
+        const subtotal =
+            Number(product.price) *
+            qty;
+
+
+        const total =
+            subtotal +
+            shipping +
+            sticker +
+            paperbag;
+
+
+        $("stockInfo")
+            .innerHTML =
+            `Stok tersedia: <b>${number(product.stock)}</b> unit`;
+
+
+        $("productPrice")
+            .textContent =
+            rupiah(
+                product.price
+            );
+
+
+        $("productSubtotal")
+            .textContent =
+            rupiah(
+                subtotal
+            );
+
+
+        $("transactionTotal")
+            .textContent =
+            rupiah(
+                total
+            );
+    }
+
+
+
+    [
+        "transactionProduct",
+        "transactionQty",
+        "shipping",
+        "sticker",
+        "paperbag"
+    ]
+        .forEach(
+            id => {
+
+                $(id)
+                    .addEventListener(
+                        "input",
+                        calculateTransaction
+                    );
+
+
+                $(id)
+                    .addEventListener(
+                        "change",
+                        calculateTransaction
+                    );
+
+            }
+        );
+
+
+
+    /* =====================================================
+       SAVE TRANSACTION
+    ===================================================== */
+
+    $("transactionForm")
+        .addEventListener(
+            "submit",
+            async event => {
+
+                event.preventDefault();
+
+
+                if (!currentUser) {
+
+                    return;
+                }
+
+
+                const productId =
+                    $("transactionProduct")
+                        .value;
+
+
+                const product =
+                    products[productId];
+
+
+                const qty =
+                    Number(
+                        $("transactionQty")
+                            .value
+                    );
+
+
+                const shipping =
+                    Number(
+                        $("shipping").value
+                    ) || 0;
+
+
+                const sticker =
+                    Number(
+                        $("sticker").value
+                    ) || 0;
+
+
+                const paperbag =
+                    Number(
+                        $("paperbag").value
+                    ) || 0;
+
+
+                const note =
+                    $("transactionNote")
+                        .value
+                        .trim();
+
+
+                $("transactionError")
+                    .classList.add(
+                        "hidden"
+                    );
+
+
+                if (!product) {
+
+                    showTransactionError(
+                        "Pilih produk terlebih dahulu."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    !Number.isInteger(qty) ||
+                    qty < 1
+                ) {
+
+                    showTransactionError(
+                        "Qty harus minimal 1."
+                    );
+
+                    return;
+                }
+
+
+                const subtotal =
+                    Number(product.price) *
+                    qty;
+
+
+                const total =
+                    subtotal +
+                    shipping +
+                    sticker +
+                    paperbag;
+
+
+                const costTotal =
+                    Number(product.cost) *
+                    qty;
+
+
+                const button =
+                    $("saveTransactionBtn");
+
+
+                button.disabled =
+                    true;
+
+
+                button.textContent =
+                    "Menyimpan...";
+
+
+                try {
+
+                    /*
+                     * Gunakan Firebase transaction agar
+                     * dua user tidak mudah menimpa stok
+                     * pada saat bersamaan.
+                     */
+
+                    const productRef =
+                        ref(
+                            database,
+                            `products/${productId}`
+                        );
+
+
+                    let stockSucceeded =
+                        false;
+
+
+                    await runTransaction(
+                        productRef,
+                        currentProduct => {
+
+                            if (
+                                currentProduct === null
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const currentStock =
+                                Number(
+                                    currentProduct.stock
+                                ) || 0;
+
+
+                            if (
+                                currentStock < qty
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            stockSucceeded =
+                                true;
+
+
+                            return {
+
+                                ...currentProduct,
+
+                                stock:
+                                    currentStock -
+                                    qty
+
+                            };
+
+                        }
+                    );
+
+
+                    /*
+                     * Pastikan stok memang berhasil
+                     * dikurangi.
+                     */
+
+                    const freshSnapshot =
+                        await get(
+                            productRef
+                        );
+
+
+                    const freshProduct =
+                        freshSnapshot.val();
+
+
+                    if (
+                        !freshProduct ||
+                        Number(
+                            freshProduct.stock
+                        ) >
+                        Number(product.stock) - qty
+                    ) {
+
+                        throw new Error(
+                            "STOCK_FAILED"
+                        );
+                    }
+
+
+                    /*
+                     * Buat transaksi.
+                     */
+
+                    const transactionRef =
+                        push(
+                            ref(
+                                database,
+                                "transactions"
+                            )
+                        );
+
+
+                    await set(
+                        transactionRef,
+                        {
+
+                            productId,
+
+                            productName:
+                                product.name,
+
+                            productPrice:
+                                Number(
+                                    product.price
+                                ),
+
+                            productCost:
+                                Number(
+                                    product.cost
+                                ),
+
+                            qty,
+
+                            subtotal,
+
+                            shipping,
+
+                            sticker,
+
+                            paperbag,
+
+                            total,
+
+                            costTotal,
+
+                            note,
+
+                            createdAt:
+                                new Date()
+                                    .toISOString(),
+
+                            createdByUid:
+                                currentUser.uid,
+
+                            createdByEmail:
+                                currentUser.email
+
+                        }
+                    );
+
+
+                    $("transactionForm")
+                        .reset();
+
+
+                    $("transactionQty")
+                        .value = 1;
+
+
+                    calculateTransaction();
+
+
+                    showToast(
+                        "Transaksi berhasil disimpan.",
+                        "✓"
+                    );
+
+
+                    navigateTo(
+                        "dashboard"
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    /*
+                     * Catatan:
+                     * Jika stok sudah terpotong tetapi
+                     * penulisan transaksi gagal,
+                     * admin perlu melakukan koreksi stok.
+                     * Versi berikutnya bisa dipindahkan
+                     * ke server-side transaction.
+                     */
+
+                    showTransactionError(
+                        "Transaksi gagal disimpan. Periksa koneksi dan stok."
+                    );
+
+                } finally {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Simpan Transaksi";
+                }
+
+            }
+        );
+
+
+
+    function showTransactionError(
+        message
+    ) {
+
+        $("transactionError")
+            .textContent =
+            message;
+
+
+        $("transactionError")
+            .classList.remove(
+                "hidden"
+            );
+    }
+
+
+
+    /* =====================================================
+       PRODUCT CRUD
+    ===================================================== */
+
+    function openProductModal(
+        productId = null
+    ) {
+
+        editingProductId =
+            productId;
+
+
+        if (productId) {
+
+            const product =
+                products[productId];
+
+
+            if (!product) return;
+
+
+            $("productModalTitle")
+                .textContent =
+                "Edit Produk";
+
+
+            $("editProductId")
+                .value =
+                productId;
+
+
+            $("productName")
+                .value =
+                product.name;
+
+
+            $("productStock")
+                .value =
+                product.stock;
+
+
+            $("productCost")
+                .value =
+                product.cost;
+
+
+            $("productPrice")
+                .value =
+                product.price;
+
+
+        } else {
+
+            $("productModalTitle")
+                .textContent =
+                "Tambah Produk";
+
+
+            $("productForm")
+                .reset();
+
+
+            $("editProductId")
+                .value = "";
+
+
+            $("productStock")
+                .value = 0;
+
+
+            $("productCost")
+                .value = 0;
+
+
+            $("productPrice")
+                .value = 0;
+
+        }
+
+
+        $("productModal")
+            .classList.remove(
+                "hidden"
+            );
+
+
+        $("productModal")
+            .classList.add(
+                "flex"
+            );
+    }
+
+
+
+    function closeProductModal() {
+
+        $("productModal")
+            .classList.add(
+                "hidden"
+            );
+
+
+        $("productModal")
+            .classList.remove(
+                "flex"
+            );
+    }
+
+
+
+    $("addProductBtn")
+        .addEventListener(
+            "click",
+            () => {
+
+                openProductModal();
+
+            }
+        );
+
+
+    $("closeProductModal")
+        .addEventListener(
+            "click",
+            closeProductModal
+        );
+
+
+
+    $("productForm")
+        .addEventListener(
+            "submit",
+            async event => {
+
+                event.preventDefault();
+
+
+                const name =
+                    $("productName")
+                        .value
+                        .trim();
+
+
+                const stock =
+                    Math.max(
+                        0,
+                        Number(
+                            $("productStock")
+                                .value
+                        ) || 0
+                    );
+
+
+                const cost =
+                    Math.max(
+                        0,
+                        Number(
+                            $("productCost")
+                                .value
+                        ) || 0
+                    );
+
+
+                const price =
+                    Math.max(
+                        0,
+                        Number(
+                            $("productPrice")
+                                .value
+                        ) || 0
+                    );
+
+
+                if (!name) {
+
+                    showToast(
+                        "Nama produk wajib diisi.",
+                        "!"
+                    );
+
+                    return;
+                }
+
+
+                try {
+
+                    if (
+                        editingProductId
+                    ) {
+
+                        await update(
+                            ref(
+                                database,
+                                `products/${editingProductId}`
+                            ),
+                            {
+                                name,
+                                stock,
+                                cost,
+                                price
+                            }
+                        );
+
+
+                        showToast(
+                            "Produk diperbarui.",
+                            "✓"
+                        );
+
+
+                    } else {
+
+                        const newRef =
+                            push(
+                                ref(
+                                    database,
+                                    "products"
+                                )
+                            );
+
+
+                        await set(
+                            newRef,
+                            {
+
+                                name,
+
+                                stock,
+
+                                cost,
+
+                                price,
+
+                                createdAt:
+                                    new Date()
+                                        .toISOString(),
+
+                                createdByUid:
+                                    currentUser.uid,
+
+                                createdByEmail:
+                                    currentUser.email
+
+                            }
+                        );
+
+
+                        showToast(
+                            "Produk ditambahkan.",
+                            "✓"
+                        );
+                    }
+
+
+                    closeProductModal();
+
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    showToast(
+                        "Gagal menyimpan produk.",
+                        "!"
+                    );
+                }
+
+            }
+        );
+
+
+
+    /* =====================================================
+       DELETE PRODUCT
+    ===================================================== */
+
+    window.deleteProduct =
+        async function(productId) {
+
+            const product =
+                products[productId];
+
+
+            if (!product) return;
+
+
+            /*
+             * Cegah penghapusan produk yang
+             * masih punya stok.
+             */
+
+            if (
+                Number(product.stock) > 0
+            ) {
+
+                showToast(
+                    "Kosongkan stok terlebih dahulu sebelum menghapus.",
+                    "!"
+                );
+
+                return;
+            }
+
+
+            const confirmed =
+                confirm(
+                    `Hapus produk "${product.name}"?`
+                );
+
+
+            if (!confirmed) return;
+
+
+            try {
+
+                await remove(
+                    ref(
+                        database,
+                        `products/${productId}`
+                    )
+                );
+
+
+                showToast(
+                    "Produk dihapus.",
+                    "✓"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                showToast(
+                    "Gagal menghapus produk.",
+                    "!"
+                );
+            }
+
+        };
+
+
+
+    /* =====================================================
+       STOCK MANAGEMENT
+    ===================================================== */
+
+    window.openStockModal =
+        function(productId) {
+
+            const product =
+                products[productId];
+
+
+            if (!product) return;
+
+
+            selectedStockProductId =
+                productId;
+
+
+            $("stockProductName")
+                .textContent =
+                `${product.name} · Stok ${product.stock}`;
+
+
+            $("stockAmount")
+                .value = 1;
+
+
+            $("stockModal")
+                .classList.remove(
+                    "hidden"
+                );
+
+
+            $("stockModal")
+                .classList.add(
+                    "flex"
+                );
+        };
+
+
+
+    function closeStockModal() {
+
+        $("stockModal")
+            .classList.add(
+                "hidden"
+            );
+
+
+        $("stockModal")
+            .classList.remove(
+                "flex"
+            );
+    }
+
+
+
+    $("closeStockModal")
+        .addEventListener(
+            "click",
+            closeStockModal
+        );
+
+
+
+    async function changeStock(
+        direction
+    ) {
+
+        const productId =
+            selectedStockProductId;
+
+
+        if (!productId) return;
+
+
+        const amount =
+            Math.max(
+                1,
+                Number(
+                    $("stockAmount")
+                        .value
+                ) || 1
+            );
+
+
+        const productRef =
+            ref(
+                database,
+                `products/${productId}`
+            );
+
+
+        try {
+
+            await runTransaction(
+                productRef,
+                currentProduct => {
+
+                    if (
+                        currentProduct === null
+                    ) {
+                        return;
+                    }
+
+
+                    const currentStock =
+                        Number(
+                            currentProduct.stock
+                        ) || 0;
+
+
+                    const newStock =
+                        currentStock +
+                        (
+                            direction *
+                            amount
+                        );
+
+
+                    if (
+                        newStock < 0
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    return {
+
+                        ...currentProduct,
+
+                        stock:
+                            newStock
+
+                    };
+                }
+            );
+
+
+            closeStockModal();
+
+
+            showToast(
+                direction > 0
+                    ? "Stok ditambahkan."
+                    : "Stok dikurangi.",
+                direction > 0
+                    ? "+"
+                    : "−"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            showToast(
+                "Gagal mengubah stok.",
+                "!"
+            );
+        }
+
+    }
+
+
+
+    $("addStockBtn")
+        .addEventListener(
+            "click",
+            () => {
+
+                changeStock(1);
+
+            }
+        );
+
+
+    $("subtractStockBtn")
+        .addEventListener(
+            "click",
+            () => {
+
+                changeStock(-1);
+
+            }
+        );
+
+
+
+    /* =====================================================
+       INVENTORY RENDER
+    ===================================================== */
+
+    function renderInventory() {
+
+        const tbody =
+            $("inventoryTable");
+
+
+        const list =
+            Object.entries(
+                products
+            )
+                .sort(
+                    ([, a], [, b]) =>
+                        String(a.name)
+                            .localeCompare(
+                                String(b.name),
+                                "id"
+                            )
+                );
+
+
+        if (!list.length) {
+
+            tbody.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="p-10 text-center"
+                    >
+
+                        <div class="font-bold">
+                            Belum ada produk
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Tambahkan produk pertama.
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+        }
+
+
+        tbody.innerHTML =
+            list.map(
+                ([id, product]) => {
+
+                    let badgeClass =
+                        "badge-green";
+
+                    let badgeText =
+                        "Aman";
+
+
+                    if (
+                        Number(product.stock) <= 0
+                    ) {
+
+                        badgeClass =
+                            "badge-red";
+
+                        badgeText =
+                            "Habis";
+
+                    } else if (
+                        Number(product.stock) <= 5
+                    ) {
+
+                        badgeClass =
+                            "badge-yellow";
+
+                        badgeText =
+                            "Menipis";
+                    }
+
+
+                    return `
+
+                        <tr class="border-b border-slate-100 last:border-0">
+
+                            <td class="px-4 py-4">
+
+                                <div class="font-bold">
+                                    ${escapeHtml(
+                                        product.name
+                                    )}
+                                </div>
+
+                                <span class="badge ${badgeClass} mt-1">
+                                    ${badgeText}
+                                </span>
+
+                            </td>
+
+
+                            <td class="px-4 py-4 text-right font-bold">
+                                ${number(
+                                    product.stock
+                                )}
+                            </td>
+
+
+                            <td class="px-4 py-4 text-right text-slate-500">
+                                ${rupiah(
+                                    product.cost
+                                )}
+                            </td>
+
+
+                            <td class="px-4 py-4 text-right font-black">
+                                ${rupiah(
+                                    product.price
+                                )}
+                            </td>
+
+
+                            <td class="px-4 py-4">
+
+                                <div class="flex justify-end gap-2">
+
+                                    <button
+                                        class="btn btn-secondary text-xs"
+                                        onclick="openStockModal('${id}')"
+                                    >
+                                        Stok
+                                    </button>
+
+
+                                    <button
+                                        class="btn btn-secondary text-xs"
+                                        onclick="openEditProduct('${id}')"
+                                    >
+                                        Edit
+                                    </button>
+
+
+                                    <button
+                                        class="btn btn-danger text-xs"
+                                        onclick="deleteProduct('${id}')"
+                                    >
+                                        Hapus
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+                }
+            )
+            .join("");
+    }
+
+
+
+    window.openEditProduct =
+        function(productId) {
+
+            openProductModal(
+                productId
+            );
+
+        };
+
+
+
+    /* =====================================================
+       HISTORY
+    ===================================================== */
+
+    function renderHistory() {
+
+        const search =
+            $("historySearch")
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        let list =
+            Object.entries(
+                transactions
+            )
+                .map(
+                    ([id, data]) => ({
+                        id,
+                        ...data
+                    })
+                )
+                .sort(
+                    (a, b) =>
+                        new Date(
+                            b.createdAt
+                        ) -
+                        new Date(
+                            a.createdAt
+                        )
+                );
+
+
+        if (search) {
+
+            list =
+                list.filter(
+                    transaction => {
+
+                        const text = [
+
+                            transaction.id,
+
+                            transaction.productName,
+
+                            transaction.note,
+
+                            transaction.createdByEmail
+
+                        ]
+                            .join(" ")
+                            .toLowerCase();
+
+
+                        return text.includes(
+                            search
+                        );
+                    }
+                );
+        }
+
+
+        if (!list.length) {
+
+            $("historyList")
+                .innerHTML = `
+
+                    <div class="p-10 text-center">
+
+                        <div class="text-3xl mb-3">
+                            ☷
+                        </div>
+
+                        <div class="font-bold">
+                            Belum ada transaksi
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-1">
+                            Data transaksi akan muncul di sini.
+                        </div>
+
+                    </div>
+
+                `;
+
+            return;
+        }
+
+
+        $("historyList")
+            .innerHTML =
+            list.map(
+                transaction => `
+
+                    <div class="p-4 sm:p-5 border-b border-slate-100 last:border-0">
+
+                        <div class="flex flex-col sm:flex-row justify-between gap-4">
+
+                            <div>
+
+                                <div class="flex items-center gap-2 flex-wrap">
+
+                                    <div class="font-black">
+                                        ${escapeHtml(
+                                            transaction.productName
+                                        )}
+                                    </div>
+
+                                    <span class="badge badge-gray">
+                                        ${number(
+                                            transaction.qty
+                                        )} unit
+                                    </span>
+
+                                </div>
+
+
+                                <div class="text-xs text-slate-400 mt-2">
+                                    ${formatDate(
+                                        transaction.createdAt
+                                    )}
+                                </div>
+
+
+                                <div class="text-xs text-slate-500 mt-1">
+                                    ${escapeHtml(
+                                        transaction.createdByEmail ||
+                                        "-"
+                                    )}
+                                </div>
+
+
+                                ${
+                                    transaction.note
+                                    ? `
+                                        <div class="text-xs text-slate-500 mt-1">
+                                            ${escapeHtml(
+                                                transaction.note
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                                }
+
+                            </div>
+
+
+                            <div class="sm:text-right">
+
+                                <div class="text-lg font-black">
+                                    ${rupiah(
+                                        transaction.total
+                                    )}
+                                </div>
+
+                                <div class="text-xs text-slate-400 mt-1">
+                                    HPP ${rupiah(
+                                        transaction.costTotal
+                                    )}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
+
+                            <div class="bg-slate-50 rounded-lg p-2">
+
+                                <div class="text-xs text-slate-400">
+                                    Produk
+                                </div>
+
+                                <div class="font-bold text-sm mt-1">
+                                    ${rupiah(
+                                        transaction.subtotal
+                                    )}
+                                </div>
+
+                            </div>
+
+
+                            <div class="bg-slate-50 rounded-lg p-2">
+
+                                <div class="text-xs text-slate-400">
+                                    Ongkir
+                                </div>
+
+                                <div class="font-bold text-sm mt-1">
+                                    ${rupiah(
+                                        transaction.shipping
+                                    )}
+                                </div>
+
+                            </div>
+
+
+                            <div class="bg-slate-50 rounded-lg p-2">
+
+                                <div class="text-xs text-slate-400">
+                                    Stiker
+                                </div>
+
+                                <div class="font-bold text-sm mt-1">
+                                    ${rupiah(
+                                        transaction.sticker
+                                    )}
+                                </div>
+
+                            </div>
+
+
+                            <div class="bg-slate-50 rounded-lg p-2">
+
+                                <div class="text-xs text-slate-400">
+                                    Paperbag
+                                </div>
+
+                                <div class="font-bold text-sm mt-1">
+                                    ${rupiah(
+                                        transaction.paperbag
+                                    )}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `
+            )
+            .join("");
+    }
+
+
+
+    $("historySearch")
+        .addEventListener(
+            "input",
+            renderHistory
+        );
+
+
+
+    /* =====================================================
+       RENDER EVERYTHING
+    ===================================================== */
+
+    function renderAll() {
+
+        renderDate();
+
+        renderProductSelect();
+
+        renderDashboard();
+
+        renderInventory();
+
+        renderHistory();
+
+        calculateTransaction();
+
+    }
+
+
+
+    /* =====================================================
+       DATE
+    ===================================================== */
+
+    function renderDate() {
+
+        $("currentDate")
+            .textContent =
+            new Intl.DateTimeFormat(
+                "id-ID",
+                {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            ).format(
+                new Date()
+            );
+    }
+
+
+
+    /* =====================================================
+       MODAL EVENTS
+    ===================================================== */
+
+    $("productModal")
+        .addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    $("productModal")
+                ) {
+
+                    closeProductModal();
+
+                }
+
+            }
+        );
+
+
+    $("stockModal")
+        .addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    $("stockModal")
+                ) {
+
+                    closeStockModal();
+
+                }
+
+            }
+        );
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                closeProductModal();
+
+                closeStockModal();
+
+            }
+
+        }
+    );
+
+
+
+    /* =====================================================
+       INITIAL UI
+    ===================================================== */
+
+    navigateTo(
+        "dashboard"
+    );
+
+
+    renderDate();
+
+
+</script>
+
 </body>
 </html>
