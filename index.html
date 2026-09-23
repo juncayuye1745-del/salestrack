@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SalesTrack</title>
+</head>
+
+<body>
+  <h1>SalesTrack</h1>
+  <p id="status">Menghubungkan ke Firebase...</p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyB8Xsejs9mr5fGcsREESFLBbFx3CmW1Hrg",
+  authDomain: "salestrack-e1cc2.firebaseapp.com",
+  databaseURL: "https://salestrack-e1cc2-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "salestrack-e1cc2",
+  storageBucket: "salestrack-e1cc2.firebasestorage.app",
+  messagingSenderId: "89422523397",
+  appId: "1:89422523397:web:2055c259b5cbac7e57006c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    onAuthStateChanged(auth, (user) => {
+      const status = document.getElementById("status");
+
+      if (user) {
+        status.textContent = "Firebase terhubung. Login sebagai: " + user.email;
+      } else {
+        status.textContent = "Firebase terhubung, tetapi belum login.";
+      }
+    });
+  </script>
+</body>
+</html>
